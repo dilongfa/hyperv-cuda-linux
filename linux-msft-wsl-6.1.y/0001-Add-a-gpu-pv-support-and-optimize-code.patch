@@ -1,0 +1,87 @@
+diff --git a/drivers/hv/dxgkrnl/dxgmodule.c b/drivers/hv/dxgkrnl/dxgmodule.c
+index f419597f7..cd3896053 100644
+--- a/drivers/hv/dxgkrnl/dxgmodule.c
++++ b/drivers/hv/dxgkrnl/dxgmodule.c
+@@ -27,6 +27,19 @@
+ #undef dev_fmt
+ #define dev_fmt(fmt)   "dxgk: " fmt
+ 
++/*
++ * GPU paravirtualization global DXGK channel
++ * {DDE9CBC0-5060-4436-9448-EA1254A5D177}
++ */
++#define HV_GPUP_DXGK_GLOBAL_GUID .guid = GUID_INIT(0xdde9cbc0, 0x5060, 0x4436, 0x94, 0x48, 0xea, 0x12, 0x54, 0xa5, 0xd1, 0x77)
++
++/*
++ * GPU paravirtualization per virtual GPU DXGK channel
++ * {6E382D18-3336-4F4B-ACC4-2B7703D4DF4A}
++ */
++#define HV_GPUP_DXGK_VGPU_GUID .guid = GUID_INIT(0x6e382d18, 0x3336, 0x4f4b, 0xac, 0xc4, 0x2b, 0x77, 0x3, 0xd4, 0xdf, 0x4a)
++
++
+ /*
+  * Interface from dxgglobal
+  */
+@@ -753,7 +766,7 @@ static int dxg_probe_vmbus(struct hv_device *hdev,
+ 
+    mutex_lock(&dxgglobal->device_mutex);
+ 
+-   if (uuid_le_cmp(hdev->dev_type, dxg_vmbus_id_table[0].guid) == 0) {
++    if (guid_equal(&hdev->dev_type, &dxg_vmbus_id_table[0].guid)) {
+        /* This is a new virtual GPU channel */
+        guid_to_luid(&hdev->channel->offermsg.offer.if_instance, &luid);
+        DXG_TRACE("vGPU channel: %pUb",
+@@ -768,8 +781,8 @@ static int dxg_probe_vmbus(struct hv_device *hdev,
+        list_add_tail(&vgpuch->vgpu_ch_list_entry,
+                  &dxgglobal->vgpu_ch_list_head);
+        dxgglobal_start_adapters();
+-   } else if (uuid_le_cmp(hdev->dev_type,
+-          dxg_vmbus_id_table[1].guid) == 0) {
++   } else if (guid_equal(&hdev->dev_type,
++          &dxg_vmbus_id_table[1].guid)) {
+        /* This is the global Dxgkgnl channel */
+        DXG_TRACE("Global channel: %pUb",
+             &hdev->channel->offermsg.offer.if_instance);
+@@ -794,7 +807,11 @@ error:
+    return ret;
+ }
+  
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,3,0)
++static void dxg_remove_vmbus(struct hv_device *hdev)
++#else
+ static int dxg_remove_vmbus(struct hv_device *hdev)
++#endif
+ {
+    int ret = 0;
+    struct dxgvgpuchannel *vgpu_channel;
+@@ -802,7 +819,7 @@ static int dxg_remove_vmbus(struct hv_device *hdev)
+ 
+    mutex_lock(&dxgglobal->device_mutex);
+ 
+-   if (uuid_le_cmp(hdev->dev_type, dxg_vmbus_id_table[0].guid) == 0) {
++   if (guid_equal(&hdev->dev_type, &dxg_vmbus_id_table[0].guid)) {
+        DXG_TRACE("Remove virtual GPU channel");
+        dxgglobal_stop_adapter_vmbus(hdev);
+        list_for_each_entry(vgpu_channel,
+@@ -814,8 +831,8 @@ static int dxg_remove_vmbus(struct hv_device *hdev)
+                break;
+            }
+        }
+-   } else if (uuid_le_cmp(hdev->dev_type,
+-          dxg_vmbus_id_table[1].guid) == 0) {
++   } else if (guid_equal(&hdev->dev_type,
++          &dxg_vmbus_id_table[1].guid)) {
+        DXG_TRACE("Remove global channel device");
+        dxgglobal_destroy_global_channel();
+    } else {
+@@ -826,7 +843,9 @@ static int dxg_remove_vmbus(struct hv_device *hdev)
+ 
+    mutex_unlock(&dxgglobal->device_mutex);
+ 
+-   return ret;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6,3,0)
++   return ret;
++#endif
+ }
+ 
+ MODULE_DEVICE_TABLE(vmbus, dxg_vmbus_id_table);
