@@ -1,7 +1,7 @@
-diff --git a/drivers/hv/dxgkrnl/dxgmodule.c b/drivers/hv/dxgkrnl/dxgmodule.c
+diff --git drivers/hv/dxgkrnl/dxgmodule.c drivers/hv/dxgkrnl/dxgmodule.c
 index f419597f7..d5f0ab629 100644
---- a/drivers/hv/dxgkrnl/dxgmodule.c
-+++ b/drivers/hv/dxgkrnl/dxgmodule.c
+--- /drivers/hv/dxgkrnl/dxgmodule.c
++++ /drivers/hv/dxgkrnl/dxgmodule.c
 @@ -27,6 +27,22 @@
  #undef dev_fmt
  #define dev_fmt(fmt)   "dxgk: " fmt
