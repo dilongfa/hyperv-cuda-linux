@@ -1,10 +1,10 @@
-diff --git drivers/hv/dxgkrnl/dxgmodule.c drivers/hv/dxgkrnl/dxgmodule.c
-index b9fa943a3..9b28c2c3c 100644
---- /drivers/hv/dxgkrnl/dxgmodule.c
-+++ /drivers/hv/dxgkrnl/dxgmodule.c
-@@ -28,6 +28,23 @@
+diff --git a/drivers/hv/dxgkrnl/dxgmodule.c b/drivers/hv/dxgkrnl/dxgmodule.c
+index f419597f7..d5f0ab629 100644
+--- a/drivers/hv/dxgkrnl/dxgmodule.c
++++ b/drivers/hv/dxgkrnl/dxgmodule.c
+@@ -27,6 +27,22 @@
  #undef dev_fmt
- #define dev_fmt(fmt)	"dxgk: " fmt
+ #define dev_fmt(fmt)   "dxgk: " fmt
  
 +/*
 + * GPU paravirtualization global DXGK channel
@@ -21,7 +21,6 @@ index b9fa943a3..9b28c2c3c 100644
 +#define HV_GPUP_DXGK_VGPU_GUID \
 +        .guid = GUID_INIT(0x6e382d18, 0x3336, 0x4f4b, 0xac, 0xc4, \
 +                          0x2b, 0x77, 0x3, 0xd4, 0xdf, 0x4a)
-+
 +
  /*
   * Interface from dxgglobal
