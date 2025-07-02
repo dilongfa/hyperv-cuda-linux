@@ -85,4 +85,6 @@ index f419597f7..cd3896053 100644
  }
  
  MODULE_DEVICE_TABLE(vmbus, dxg_vmbus_id_table);
+
+ 
  
