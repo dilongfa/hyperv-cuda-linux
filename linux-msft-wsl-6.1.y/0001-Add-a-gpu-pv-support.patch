@@ -1,10 +1,10 @@
 diff --git drivers/hv/dxgkrnl/dxgmodule.c drivers/hv/dxgkrnl/dxgmodule.c
-index f419597f7..cd3896053 100644
+index b9fa943a3..9b28c2c3c 100644
 --- /drivers/hv/dxgkrnl/dxgmodule.c
 +++ /drivers/hv/dxgkrnl/dxgmodule.c
 @@ -27,6 +27,23 @@
  #undef dev_fmt
- #define dev_fmt(fmt)   "dxgk: " fmt
+ #define dev_fmt(fmt)	"dxgk: " fmt
  
 +/*
 + * GPU paravirtualization global DXGK channel
